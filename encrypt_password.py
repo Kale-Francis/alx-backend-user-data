@@ -9,7 +9,7 @@ def hash_password(password: str) -> bytes:
     """
     Hash a password using bcrypt with automatic salt
     """
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    returnbcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
 # Task 6: Check valid password
 def is_valid(hashed_password: bytes, password: str) -> bool:
