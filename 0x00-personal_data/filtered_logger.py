@@ -89,3 +89,22 @@ class RedactingFormatter(logging.Formatter):
         """
         record.msg = filter_datum(self.fields, self.REDACTION, record.msg, self.SEPARATOR)
         return super(RedactingFormatter, self).format(record)
+
+def main() -> None:
+    """
+    Retrieves all rows from the users table and logs them with PII fields obfuscated.
+    """
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users;")
+    logger = get_logger()
+    columns = [desc[0] for desc in cursor.description]
+    for row in cursor:
+        row_dict = dict(zip(columns, row))
+        log_message = ";".join(f"{key}={value}" for key, value in row_dict.items()) + ";"
+        logger.info(log_message)
+    cursor.close()
+    db.close()
+
+if __name__ == "__main__":
+    main()
