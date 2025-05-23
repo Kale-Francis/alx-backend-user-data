@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-Module to obfuscate sensitive fields in log messages and configure logging.
+Module to obfuscate sensitive fields in log messages, configure logging, and connect to a MySQL database.
 """
 import re
 from typing import List
 import logging
+import os
+import mysql.connector
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
@@ -38,6 +40,24 @@ def get_logger() -> logging.Logger:
     handler.setFormatter(RedactingFormatter(fields=PII_FIELDS))
     logger.addHandler(handler)
     return logger
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """
+    Connects to a MySQL database using credentials from environment variables.
+
+    Returns:
+        A mysql.connector.connection.MySQLConnection object.
+    """
+    username = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
+    password = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
+    host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
+    database = os.getenv("PERSONAL_DATA_DB_NAME")
+    return mysql.connector.connect(
+        user=username,
+        password=password,
+        host=host,
+        database=database
+    )
 
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
