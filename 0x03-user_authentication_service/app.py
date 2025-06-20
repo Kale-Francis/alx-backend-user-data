@@ -12,7 +12,7 @@ def _hash_password(password: str) -> bytes:
     """Hash a password using bcrypt
 
     Args:
-        password (str): Password to hash password
+        password (str): Password to hash
 
     Returns:
         bytes: Salted and hashed password
@@ -25,6 +25,7 @@ class Auth:
     """
 
     def __init__(self):
+        """Initialize Auth with a DB instance"""
         self._db = DB()
 
     def register_user(self, email: str, password: str) -> User:
@@ -62,3 +63,4 @@ class Auth:
             return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
         except NoResultFound:
             return False
+
